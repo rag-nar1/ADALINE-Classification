@@ -2,6 +2,7 @@
 # updating weights after each input in perceptron
 
 # Error = (Y - Y_hat)^2  where Y is the target and Y_hat is the predicted value
+# dE/ dY = 2 * (Y - Y_hat) , dY/dW = X -> Y = WX + B, dE/dW = dE/dY * dY/dW
 # d(Error)/d(W) = 2 * (Y - Y_hat) * X where W is the weights and X is the input
 # W = W + learning_rate * d(Error)/d(W) = W + learning_rate * 2 * (Y - Y_hat) * X
 # MSE = (Y - Y_hat)^2 / N where N is the number of inputs and MSE is the mean squared error
@@ -24,7 +25,7 @@ class Adaline:
         self.init_weights()
         self.classification_rate = []
      
-    def activate(self, input) -> int: # unit step function
+    def threshold(self, input) -> int: # unit step function
         if input >= 0:
             return 1
         return -1
@@ -37,10 +38,6 @@ class Adaline:
         for i in range(len(inputs)):
             output += inputs[i] * self.weights[i]
         return output
-
-    def calculate_MSE(self, Y_hat, Y) -> float:
-        MSE = ((Y - Y_hat) ** 2).sum() / len(Y)
-        return MSE
     
     def calculate_classification_rate(self, Y_hat, Y) -> float:
         return np.mean(Y_hat == Y)
@@ -51,19 +48,17 @@ class Adaline:
         self.bias += self.learning_rate * errors.sum()
             
     
-    def train(self , X , Y):
+    def train(self, X , Y):
         for _ in range(self.iterations):
             Y_hat = np.array([])
             for i in range(len(X)):
-                Y_hat = np.append(Y_hat , self.activate(self.multiply(X[i]) + self.bias))
+                Y_hat = np.append(Y_hat , self.threshold(self.multiply(X[i]) + self.bias))
             
             self.update_weights(X , Y_hat , Y)  
-            MSE = self.calculate_MSE(Y_hat , Y)
-            self.errors.append(MSE)
             self.classification_rate.append(self.calculate_classification_rate(Y_hat , Y) * 100)
     
     def predict(self , X):
-        return self.activate(self.multiply(X) + self.bias)
+        return self.threshold(self.multiply(X) + self.bias)
         
 
 

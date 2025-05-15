@@ -7,7 +7,7 @@ import os
 def hash(image):
     hashed = np.array([])
     for i in range(0, len(image), 3):
-        hashed = np.append(hashed, (image[i] * 2 + image[i + 1] * 4 + image[i + 2] * 8))
+        hashed = np.append(hashed, (image[i] * 251 + image[i + 1] * 251**2 + image[i + 2] * 251**3))
     return hashed
 
 class TrainingData:
